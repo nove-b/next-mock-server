@@ -45,40 +45,6 @@
 import { NextRequest } from "next/server";
 
 
-/**
- * @swagger
- * /api/test:
- *   get:
- *     tags:
- *       - test
- *     description: シンプルにGetする
- *     responses:
- *       200:
- *         description: Successful response
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/ApiResponse'
- *             examples:
- *                 value:
- *                   status: 200
- *                   data: { text: 'hello world'}
- *                   message: '' 
- *       400:
- *         $ref: '#/components/responses/BadRequest'
- *       500:
- *         $ref: '#/components/responses/InternalServerError' */
-
-export async function GET(_request: NextRequest) {
-    return new Promise((resolve) => {
-        setTimeout(() => {
-            resolve(new Response(JSON.stringify({ status: 200, data: { text: 'get! hello world'}, message: '' }), {
-                headers: { 'Content-Type': 'application/json' },
-                status: 200,
-            }));
-        }, 500); // 0.5秒遅延
-    });
-}
 
 
 /**
@@ -97,6 +63,12 @@ export async function GET(_request: NextRequest) {
  *         schema:
  *           type: string
  *         description: IDパラメータ
+ *       - in: query
+ *         name: query
+ *         required: false
+ *         schema:
+ *           type: string
+ *         description: クエリパラメータ
  *     requestBody:
  *       required: true
  *       content:
@@ -126,9 +98,11 @@ export async function GET(_request: NextRequest) {
  *       500:
  *         $ref: '#/components/responses/InternalServerError'
  */
-export async function POST(request: Request, { params }: { params: { id: number } }) {
+export async function POST(request: NextRequest, { params }: { params: { id: number } }) {
+    const searchParams = request.nextUrl.searchParams
+    const query = searchParams.get('query')
+    console.log(query)
     const path = params.id
-    console.log(path)
     const body = await request.json(); 
     return new Promise((resolve) => {
         setTimeout(() => {
